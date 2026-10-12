@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rotasi & Revolusi Bumi 3D</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f6fb;--fg:#151922;--card:#fff;--mut:#586275;--ac:#2f6fed;--bd:#dce1ea}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1017;--fg:#e8ebf2;--card:#171b25;--mut:#9aa3b5;--ac:#6ea0ff;--bd:#2a3040}}
+:root[data-theme="dark"]{--bg:#0d1017;--fg:#e8ebf2;--card:#171b25;--mut:#9aa3b5;--ac:#6ea0ff;--bd:#2a3040}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding:14px}
+h1{font-size:20px;margin:4px 0 10px}
+h1 span{font-weight:400;color:var(--mut);font-size:14px}
+.tabs{display:flex;gap:8px;margin-bottom:10px}
+button{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--fg);padding:8px 12px;border-radius:10px;cursor:pointer}
+button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.tabs button{flex:1}
+.cvw{position:relative;background:#05070d;border-radius:14px;overflow:hidden}
+canvas{display:block;width:100%;touch-action:none;cursor:grab}
+.hint{position:absolute;left:10px;bottom:8px;color:#8f9ab0;font-size:11px;pointer-events:none}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-top:10px}
+label{display:block;font-size:13px;color:var(--mut);margin-bottom:8px}
+label b{color:var(--fg)}
+input[type=range]{width:100%;accent-color:var(--ac)}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.btns button{padding:6px 10px;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.cell{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 10px}
+.cell small{display:block;color:var(--mut);font-size:11px}
+.cell b{font-size:14px}
+.legend{font-size:12px;color:var(--mut);margin:8px 2px 0}
+h2{font-size:15px;margin:0 0 4px}
+.card p{margin:0;font-size:14px}
+</style></head><body><div class="wrap">
+<h1>Rotasi &amp; Revolusi Bumi <span>3D interaktif</span></h1>
+<div class="tabs"><button id="tO" class="on">☀ Revolusi (orbit)</button><button id="tE">🌍 Rotasi (Bumi)</button></div>
+<div class="cvw"><canvas id="cv"></canvas><div class="hint">Seret untuk memutar kamera</div></div>
+<div class="legend" id="lg"></div>
+<div class="card">
+<label>Tanggal (2026): <b id="dl"></b><input type="range" id="ds" min="0" max="364" step="1" value="171"></label>
+<label>Jam (UTC): <b id="hl"></b><input type="range" id="hs" min="0" max="23.98" step="0.02" value="12"></label>
+<div class="btns"><button id="bP" class="on">⏸ Jeda</button><button id="bR">▶ Rotasi</button><button id="bV">▶ Revolusi</button><button id="bC">↺ Kamera</button></div>
+<div class="btns"><button data-t="78.62">Ekuinoks Mar</button><button data-t="171.35">Solstis Jun</button><button data-t="265">Ekuinoks Sep</button><button data-t="354.66">Solstis Des</button><button data-t="2.72">Perihelion</button><button data-t="184.3">Aphelion</button></div>
+</div>
+<div class="grid">
+<div class="cell"><small>Tanggal &amp; waktu</small><b id="iT"></b></div>
+<div class="cell"><small>Jarak Bumi–Matahari</small><b id="iD"></b></div>
+<div class="cell"><small>Kecepatan orbit</small><b id="iV"></b></div>
+<div class="cell"><small>Matahari tepat di atas (lintang)</small><b id="iA"></b></div>
+<div class="cell"><small>Matahari tepat di atas (bujur)</small><b id="iB"></b></div>
+<div class="cell"><small>Jakarta (6,2°LS, 106,85°BT)</small><b id="iJ"></b></div>
+</div>
+<div class="card"><h2>Rotasi</h2><p>Bumi berputar pada sumbunya dari barat ke timur (berlawanan arah jarum jam dilihat dari atas Kutub Utara). Satu putaran terhadap bintang = 23 jam 56 menit 4 detik (hari sideris). Kecepatan permukaan di khatulistiwa ≈ 1.674 km/jam, mengecil ke arah kutub (≈ 1.674 × cos lintang), dan nol di kutub. Hasilnya: siang–malam, serta Matahari tampak terbit di timur dan terbenam di barat.</p></div>
+<div class="card"><h2>Revolusi</h2><p>Bumi mengelilingi Matahari pada orbit elips yang hampir bulat (eksentrisitas 0,0167), berlawanan arah jarum jam dilihat dari utara. Satu edaran terhadap bintang = 365,256 hari; siklus musim (tahun tropis) = 365,242 hari. Kecepatan rata-rata ≈ 29,78 km/s. Terdekat (perihelion) sekitar 3 Januari ≈ 147,1 juta km; terjauh (aphelion) sekitar 4 Juli ≈ 152,1 juta km.</p></div>
+<div class="card"><h2>Kemiringan sumbu → musim</h2><p>Sumbu rotasi miring 23,44° dari garis tegak lurus bidang orbit, dan arahnya hampir tetap sepanjang tahun (presesinya baru selesai ±26.000 tahun). Karena itu belahan bumi secara bergantian lebih menghadap Matahari. Musim disebabkan kemiringan, bukan jarak: perihelion justru terjadi saat musim dingin di belahan utara. Saat solstis Juni Matahari tepat di atas 23,44°LU, solstis Desember di 23,44°LS, dan saat ekuinoks di khatulistiwa.</p></div>
+<div class="card"><h2>Mengapa sehari 24 jam, bukan 23 j 56 m?</h2><p>Setelah satu putaran penuh 360°, Matahari belum kembali ke posisi yang sama di langit karena Bumi juga bergeser ≈ 0,986° pada orbitnya. Bumi perlu berputar ekstra ≈ 3 menit 56 detik, sehingga hari matahari rata-rata = 24 jam. Dalam setahun tropis ada ≈ 366,24 putaran sideris tetapi 365,24 hari matahari.</p></div>
+<div class="card"><h2>Catatan model</h2><p>Ukuran Bumi dan Matahari tidak sesuai skala (jika sesuai skala, Bumi hanya sebesar ±0,02 piksel). Eksentrisitas orbit, kemiringan sumbu, dan arah putar sesuai nilai nyata; orbit dihitung dengan persamaan Kepler, dan persamaan waktu (±16 menit) ikut terhitung. Tanggal solstis/ekuinoks mengacu pada tahun 2026 (±beberapa jam). Presesi, nutasi, Bulan, dan kepepatan Bumi diabaikan.</p></div>
+</div>
+<script>
+const TAU=Math.PI*2,D=Math.PI/180,EC=0.0167086,EPS=23.4393*D,L0=103*D;
+const sE=Math.sin(EPS),cE=Math.cos(EPS),nV=[0,sE,cE],e1=[1,0,0],e2=[0,cE,-sE];
+const $=id=>document.getElementById(id),cv=$('cv'),ctx=cv.getContext('2d');
+let t=171.35,mode='pause',view='orbit',W=360,H=360,last=0;
+const cams={orbit:{yaw:0,pitch:.9},earth:{yaw:-Math.PI/2,pitch:.15}};
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const camMat=(y,p)=>{const cy=Math.cos(y),sy=Math.sin(y),cp=Math.cos(p),sp=Math.sin(p);return[[cy,-sy,0],[cp*sy,cp*cy,-sp],[sp*sy,sp*cy,cp]]};
+const mv=(M,v)=>[dot(M[0],v),dot(M[1],v),dot(M[2],v)];
+const stars=Array.from({length:70},(_,i)=>[(Math.sin(i*91.7)*.5+.5),(Math.sin(i*37.3+2)*.5+.5),.4+(i%3)*.3]);
+function state(){
+  const M=TAU*(t-2.72)/365.256;let E=M;for(let i=0;i<10;i++)E=M+EC*Math.sin(E);
+  const nu=2*Math.atan2(Math.sqrt(1+EC)*Math.sin(E/2),Math.sqrt(1-EC)*Math.cos(E/2));
+  const r=1-EC*Math.cos(E),L=L0+nu,T=(t%1)*24;
+  const sd=[-Math.cos(L),-Math.sin(L),0],psiS=Math.atan2(dot(sd,e2),dot(sd,e1));
+  const psiM=L0+Math.PI+M;let rho=psiM+(T-12)*Math.PI/12;rho=((rho%TAU)+TAU)%TAU;
+  return{r,L,T,sd,rho,psiS,pos:[r*Math.cos(L),r*Math.sin(L),0]};
+}
+const N=220,oc=document.createElement('canvas');oc.width=oc.height=N;
+const octx=oc.getContext('2d'),img=octx.createImageData(N,N);
+const sm=x=>x<=0?0:x>=1?1:x*x*(3-2*x);
+function paintEarth(M,st){
+  const u1=mv(M,e1),u2=mv(M,e2),un=mv(M,nV),sc=mv(M,st.sd),d=img.data,h=N/2;
+  for(let j=0;j<N;j++){const Z=-(j+.5-h)/h;for(let i=0;i<N;i++){
+    const X=(i+.5-h)/h,r2=X*X+Z*Z,k=(j*N+i)*4;
+    if(r2>1){d[k+3]=0;continue}
+    const Y=-Math.sqrt(1-r2);
+    const a=X*u1[0]+Y*u1[1]+Z*u1[2],b=X*u2[0]+Y*u2[1]+Z*u2[2],hh=X*un[0]+Y*un[1]+Z*un[2];
+    const lat=Math.asin(Math.max(-1,Math.min(1,hh)))/D;
+    let lon=(Math.atan2(b,a)-st.rho)/D;lon=((lon+540)%360)-180;
+    const al=Math.abs(lat),cl=Math.cos(lat*D);
+    let R=28,G=84,B=160;
+    const dm=Math.abs(((lon+7.5)%15+15)%15-7.5)*cl,dl=Math.abs(((lat+7.5)%15+15)%15-7.5);
+    if((dm<.55&&cl>.12)||dl<.55){R=70;G=125;B=200}
+    if(Math.abs(lon)*cl<.9&&cl>.12){R=255;G=235;B=110}
+    if(Math.abs(al-66.56)<.7){R=90;G=225;B=235}
+    if(Math.abs(al-23.44)<.7){R=245;G=165;B=40}
+    if(al<.8){R=235;G=70;B=70}
+    if(Math.hypot(lat+6.2,(lon-106.85)*cl)<3.2){R=255;G=60;B=210}
+    if(lat>87){R=255;G=255;B=255}
+    const L=X*sc[0]+Y*sc[1]+Z*sc[2],f=.1+.9*sm((L+.05)/.3);
+    d[k]=R*f;d[k+1]=G*f;d[k+2]=B*f;d[k+3]=255;
+  }}
+  octx.putImageData(img,0,0);
+}
+function sunDraw(x,y){
+  const g=ctx.createRadialGradient(x,y,2,x,y,36);
+  g.addColorStop(0,'rgba(255,235,130,1)');g.addColorStop(.35,'rgba(255,190,60,.55)');g.addColorStop(1,'rgba(255,160,40,0)');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,36,0,TAU);ctx.fill();
+  ctx.fillStyle='#ffd45e';ctx.beginPath();ctx.arc(x,y,11,0,TAU);ctx.fill();
+}
+function axisDraw(cx,cy,M,len){
+  const c=mv(M,nV),dx=c[0]*len,dy=-c[2]*len;
+  ctx.strokeStyle='#e6e9f2';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cx-dx,cy-dy);ctx.lineTo(cx+dx,cy+dy);ctx.stroke();
+  ctx.fillStyle='#fff';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('U',cx+dx*1.18,cy+dy*1.18-(Math.hypot(dx,dy)<6?10:0));
+  ctx.fillStyle='#9aa3b5';ctx.fillText('S',cx-dx*1.18,cy-dy*1.18);
+}
+function drawOrbit(st){
+  const c=cams.orbit,M=camMat(c.yaw,c.pitch),S=W*.3,cx=W/2,cy=H/2;
+  const P=v=>{const q=mv(M,v);return[cx+q[0]*S,cy-q[2]*S,q[1]]};
+  ctx.beginPath();
+  for(let i=0;i<=120;i++){const nu=i*3*D,r=(1-EC*EC)/(1+EC*Math.cos(nu)),L=L0+nu,p=P([r*Math.cos(L),r*Math.sin(L),0]);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])}
+  ctx.strokeStyle='rgba(150,170,220,.65)';ctx.lineWidth=1.5;ctx.stroke();
+  const seas=[[0,'Ekuinoks','~23 Sep'],[90,'Solstis','~21 Des'],[180,'Ekuinoks','~20 Mar'],[270,'Solstis','~21 Jun']];
+  ctx.font='11px system-ui';ctx.textBaseline='middle';
+  for(const[a,l1,l2]of seas){
+    const p=P([Math.cos(a*D),Math.sin(a*D),0]),dx=p[0]-cx,dy=p[1]-cy,ln=Math.hypot(dx,dy)||1;
+    ctx.fillStyle='#ffd45e';ctx.beginPath();ctx.arc(p[0],p[1],3,0,TAU);ctx.fill();
+    ctx.fillStyle='#c9d1e3';
+    const ox=p[0]+dx/ln*10,oy=p[1]+dy/ln*14;
+    ctx.textAlign=dx>10?'left':dx<-10?'right':'center';
+    ctx.fillText(l1,ox,oy-6);ctx.fillText(l2,ox,oy+6);
+  }
+  const pe=P(st.pos),ps=[cx,cy,0],R=22;
+  const drawE=()=>{paintEarth(M,st);ctx.drawImage(oc,pe[0]-R,pe[1]-R,2*R,2*R);axisDraw(pe[0],pe[1],M,R*1.7)};
+  ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(255,215,100,.35)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ps[0],ps[1]);ctx.lineTo(pe[0],pe[1]);ctx.stroke();ctx.setLineDash([]);
+  if(pe[2]>0){drawE();sunDraw(cx,cy)}else{sunDraw(cx,cy);drawE()}
+  ctx.fillStyle='#ffd45e';ctx.textAlign='center';ctx.fillText('Matahari',cx,cy+26);
+  ctx.fillStyle='#8f9ab0';ctx.textAlign='right';ctx.fillText('tidak sesuai skala',W-10,H-10);
+}
+function drawEarth(st){
+  const c=cams.earth,M=camMat(c.yaw,c.pitch),R=Math.min(W,H)*.34,cx=W/2,cy=H/2;
+  paintEarth(M,st);ctx.drawImage(oc,cx-R,cy-R,2*R,2*R);
+  axisDraw(cx,cy,M,R*1.3);
+  const s=mv(M,st.sd),dx=s[0],dy=-s[2],ln=Math.hypot(dx,dy);
+  ctx.fillStyle='#ffd45e';ctx.strokeStyle='#ffd45e';ctx.font='12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';
+  if(ln>.12){
+    const ux=dx/ln,uy=dy/ln,x1=cx+ux*R*1.08,y1=cy+uy*R*1.08,x2=cx+ux*R*1.5,y2=cy+uy*R*1.5;
+    ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-ux*8-uy*5,y2-uy*8+ux*5);ctx.lineTo(x2-ux*8+uy*5,y2-uy*8-ux*5);ctx.closePath();ctx.fill();
+    ctx.fillText('☀ cahaya Matahari',cx+ux*R*1.5,cy+uy*R*1.5+(uy>0?14:-14));
+  }else ctx.fillText(s[1]<0?'☀ Matahari di depan kamera':'☀ Matahari di belakang Bumi',cx,H-14);
+  ctx.fillStyle='#8f9ab0';ctx.textAlign='left';ctx.fillText('Rotasi ↺ ke timur (dilihat dari utara)',10,16);
+}
+const fm=(x,d)=>x.toFixed(d).replace('.',',');
+function info(st){
+  const dt=new Date(Date.UTC(2026,0,1)+t*864e5);
+  const hh=Math.floor(st.T),mm=Math.floor((st.T-hh)*60),p2=n=>String(n).padStart(2,'0');
+  const ds=dt.toLocaleDateString('id-ID',{timeZone:'UTC',day:'numeric',month:'long'});
+  $('iT').textContent=ds+', '+p2(hh)+':'+p2(mm)+' UTC';
+  $('dl').textContent=ds;$('hl').textContent=p2(hh)+':'+p2(mm);
+  $('iD').textContent=fm(st.r*149.598,1)+' juta km';
+  $('iV').textContent=fm(29.78*Math.sqrt(2/st.r-1),2)+' km/s';
+  const dec=Math.asin(dot(st.sd,nV))/D;
+  $('iA').textContent=fm(Math.abs(dec),2)+'° '+(dec>=0?'LU':'LS');
+  let sl=((st.psiS-st.rho)/D+540)%360-180;
+  $('iB').textContent=fm(Math.abs(sl),1)+'° '+(sl>=0?'BT':'BB');
+  const la=-6.2*D,lo=106.85*D+st.rho,cl=Math.cos(la);
+  const w=[0,1,2].map(i=>cl*Math.cos(lo)*e1[i]+cl*Math.sin(lo)*e2[i]+Math.sin(la)*nV[i]);
+  const el=Math.asin(dot(w,st.sd))/D,wib=(st.T+7)%24,wh=Math.floor(wib),wm=Math.floor((wib-wh)*60);
+  $('iJ').textContent=p2(wh)+':'+p2(wm)+' WIB · '+(el>0?'siang, Matahari '+fm(el,0)+'°':'malam');
+}
+function syncSl(){$('ds').value=Math.floor(t);$('hs').value=(t%1)*24}
+function setMode(m){mode=m;[['bP','pause'],['bR','rot'],['bV','rev']].forEach(([i,k])=>$(i).classList.toggle('on',k===m))}
+function setView(v){view=v;$('tO').classList.toggle('on',v==='orbit');$('tE').classList.toggle('on',v==='earth');
+  $('lg').textContent=v==='earth'?'Garis: merah = khatulistiwa · oranye = garis balik ±23,44° · cyan = lingkaran kutub ±66,56° · kuning = bujur 0° · titik magenta = Jakarta. Sisi gelap = malam.':'Orbit dilihat dari atas kutub utara ekliptika: Bumi berevolusi berlawanan arah jarum jam. Sumbu Bumi (U–S) selalu mengarah ke arah yang sama.'}
+function size(){const w=cv.parentElement.clientWidth,dp=Math.min(window.devicePixelRatio||1,2);W=w;H=w;cv.width=w*dp;cv.height=w*dp;ctx.setTransform(dp,0,0,dp,0,0)}
+function draw(){
+  const st=state();ctx.fillStyle='#05070d';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#fff';for(const s of stars){ctx.globalAlpha=s[2]*.7;ctx.fillRect(s[0]*W,s[1]*H,1.2,1.2)}ctx.globalAlpha=1;
+  view==='orbit'?drawOrbit(st):drawEarth(st);info(st);
+}
+function frame(ts){
+  const dt=Math.min(.05,(ts-last)/1000||0);last=ts;
+  if(mode==='rot')t+=dt/8;else if(mode==='rev')t+=dt*30;
+  if(mode!=='pause'){t=((t%365)+365)%365;syncSl()}
+  draw();requestAnimationFrame(frame);
+}
+$('tO').onclick=()=>setView('orbit');$('tE').onclick=()=>setView('earth');
+$('bP').onclick=()=>setMode('pause');$('bR').onclick=()=>setMode('rot');$('bV').onclick=()=>setMode('rev');
+$('bC').onclick=()=>{cams.orbit={yaw:0,pitch:.9};cams.earth={yaw:-Math.PI/2,pitch:.15}};
+$('ds').oninput=$('hs').oninput=()=>{setMode('pause');t=+$('ds').value+(+$('hs').value)/24};
+document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{setMode('pause');t=+b.dataset.t;syncSl()});
+let drag=null;
+cv.onpointerdown=e=>{drag=[e.clientX,e.clientY];cv.setPointerCapture(e.pointerId)};
+cv.onpointermove=e=>{if(!drag)return;const c=cams[view];c.yaw+=(e.clientX-drag[0])*.008;c.pitch=Math.max(-1.55,Math.min(1.55,c.pitch+(e.clientY-drag[1])*.008));drag=[e.clientX,e.clientY]};
+cv.onpointerup=cv.onpointercancel=()=>drag=null;
+window.onresize=size;size();setView('orbit');syncSl();requestAnimationFrame(frame);
+</script></body></html>
